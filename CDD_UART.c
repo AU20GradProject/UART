@@ -1,20 +1,9 @@
-#include <CDD_UART.h>
-#include <M4MemMap.h> /* for UART initialization registers*/
+#include "CDD_UART.h"
+#include "M4MemMap.h" /* for UART initialization registers*/
+#include "CDD_UART_Internal.h"
 
-typedef volatile uint32_t* const UART_RegAddType;
-
-#define MODULES_NUMBER 8u /* maximum UART Modules number in the kit */
-/*Register memory map*/
-#define UART0_BASE_ADDRESS 0x4000C000
-#define UART1_BASE_ADDRESS 0x4000D000
-#define UART2_BASE_ADDRESS 0x4000E000
-#define UART3_BASE_ADDRESS 0x4000F000
-#define UART4_BASE_ADDRESS 0x40010000
-#define UART5_BASE_ADDRESS 0x40011000
-#define UART6_BASE_ADDRESS 0x40012000
-#define UART7_BASE_ADDRESS 0x40013000
-
-static const uint32_t ModulesBaseAddressLut[MODULES_NUMBER] =
+/* UART Addresses lookup table */
+VAR( static const uint32_t, static ) ModulesBaseAddressLut[MODULES_NUMBER] =
 {
         UART0_BASE_ADDRESS,
         UART1_BASE_ADDRESS,
@@ -26,36 +15,18 @@ static const uint32_t ModulesBaseAddressLut[MODULES_NUMBER] =
         UART7_BASE_ADDRESS
 };
 
-#define UART_REG_ADDRESS(CHANNEL_ID,REG_OFFSET)\
-        (ModulesBaseAddressLut[CHANNEL_ID] + REG_OFFSET)
-
-/**/
-#define UARTDR_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x000))
-#define UARTRSR_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x004))
-#define UARTFR_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x018))
-#define UARTIBRD_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x024))
-#define UARTFBRD_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x028))
-#define UARTLCRH_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x02C))
-#define UARTCTL_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x030))
-#define UARTIFLS_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x034))
-#define UARTCC_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0xFC8))
-/* UART Interrupt. */
-#define UARTIM_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x038))
-#define UARTRIS_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x03C))
-#define UARTMIS_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x040))
-#define UARTICR_REG(MODULE_ID) *((UART_RegAddType)UART_REG_ADDRESS(MODULE_ID,0x044))
-
-static uint8_t UART_GroupState[UART_GROUPS_NUMBER] = {0};
+/* UART groups initialization status */
+VAR(static uint8_t, static )UART_GroupState[UART_GROUPS_NUMBER] = {0};
 
 
-void UART_INIT(){
-    uint16_t IntBrd;
-    uint8_t FracBrd;
-    uint8_t LoopIndex;
-    uint8_t ErrorFlag = 0;
+FUNC(void, AUTOMATIC) UART_INIT(){
+    VAR(uint16_t, AUTOMATIC) IntBrd;
+    VAR(uint8_t, AUTOMATIC) FracBrd;
+    VAR(uint8_t, AUTOMATIC) LoopIndex;
+    VAR(uint8_t, AUTOMATIC) ErrorFlag = 0;
 
-    double Brd; /* Baud Rate divsor */
-    const UART_CfgType * Init_CfgPtr;
+    VAR(double, AUTOMATIC) Brd; /* Baud Rate divsor */
+    CONST(UART_CfgType *, AUTOMATIC) Init_CfgPtr;
     for(LoopIndex = 0; (LoopIndex < UART_GROUPS_NUMBER) && (ErrorFlag == 0); LoopIndex ++)
     {
         if(UART_ConfigParam[LoopIndex].UARTModule < MODULES_NUMBER)
@@ -109,9 +80,10 @@ void UART_INIT(){
 }
 
 /* Transmit Data through group */
-TX_RX_StatusType UART_TX(uint8_t ModuleId,uint8_t TXByte){
-    TX_RX_StatusType status;
-    const UART_CfgType * UART_Info;
+FUNC(TX_RX_StatusType, AUTOMATIC) UART_TX(uint8_t ModuleId,uint8_t TXByte){
+    VAR(TX_RX_StatusType, AUTOMATIC) status;
+    CONST(UART_CfgType *, AUTOMATIC) UART_Info;
+
     if ( ModuleId < UART_GROUPS_NUMBER ){
         if( (UART_GroupState[ModuleId]==1 ) ){
         UART_Info = &  UART_ConfigParam[ModuleId];
@@ -130,13 +102,14 @@ TX_RX_StatusType UART_TX(uint8_t ModuleId,uint8_t TXByte){
         }
     }else {
         /* Invalid UART ID*/
+        status = INVALID_UART_ID;
     }
     return status;
 }
 /* Receive Data through group */
-TX_RX_StatusType UART_RX(uint8_t ModuleId,uint8_t* RXBytePtr){
-    TX_RX_StatusType status;
-    const UART_CfgType * UART_Info;
+FUNC(TX_RX_StatusType, AUTOMATIC) UART_RX(uint8_t ModuleId,uint8_t* RXBytePtr){
+    VAR(TX_RX_StatusType, AUTOMATIC) status;
+    CONST(UART_CfgType *, AUTOMATIC) UART_Info;
 
     if ( ModuleId < UART_GROUPS_NUMBER ){
         if( (UART_GroupState[ModuleId]==1 ) ){
@@ -145,13 +118,13 @@ TX_RX_StatusType UART_RX(uint8_t ModuleId,uint8_t* RXBytePtr){
         /// 0000 1000 RXFE UART Receive FIFO Empty pin 4 : 0001 0000
         if( ( UARTFR_REG( UART_Info->UARTModule ) & (0x10) ) == 0 ){
 
-            if ( UARTRSR_REG( UART_Info->UARTModule ) & (0x01) != 0 ){
+            if ( (UARTRSR_REG( UART_Info->UARTModule ) & (0x01)) != 0 ){
                 status = FRAMING_ERROR;
-            }else if ( UARTRSR_REG( UART_Info->UARTModule ) & (0x02) != 0 ){
+            }else if ( (UARTRSR_REG( UART_Info->UARTModule ) & (0x02)) != 0 ){
                 status = PARITY_ERROR;
-            }else if ( UARTRSR_REG( UART_Info->UARTModule ) & (0x04) != 0 ){
+            }else if ( (UARTRSR_REG( UART_Info->UARTModule ) & (0x04)) != 0 ){
                 status = BREAK_ERROR;
-            }else if ( UARTRSR_REG( UART_Info->UARTModule ) & (0x08) != 0 ){
+            }else if ( (UARTRSR_REG( UART_Info->UARTModule ) & (0x08)) != 0 ){
                 status = OVERRUN_ERROR;
             }else {
                 *RXBytePtr = UARTDR_REG( UART_Info->UARTModule ); //( UARTDR_REG( UART_Info->UARTModule ) & 0x0ff );
@@ -167,7 +140,7 @@ TX_RX_StatusType UART_RX(uint8_t ModuleId,uint8_t* RXBytePtr){
 
     }else {
     /* Invalid UART ID*/
-
+        status = INVALID_UART_ID;
     }
 return status;
 

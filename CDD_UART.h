@@ -3,13 +3,47 @@
 
 #include <stdint.h>
 #include "CDD_UART_Cfg.h"
+#include "../Common/Std_Types.h"
 
-typedef enum {Baud_110 = 110 ,Baud_300 = 300,Baud_600 = 600 ,Baud_1200 = 1200 ,Baud_2400 = 2400 ,Baud_4800 = 4800 ,Baud_9600 = 9600,Baud_14400 = 14400,Baud_19200 = 19200,Baud_38400 = 38400,Baud_57600 = 57600,Baud_115200 = 115200,Baud_128000 = 128000,Baud_256000 = 256000 } UART_BaudRate;
+/* available baudrates */
+
+#define Baud_110 110
+#define Baud_300 300
+#define Baud_600 600
+#define Baud_1200 1200
+#define Baud_2400 2400
+#define Baud_4800 4800
+#define Baud_9600 9600
+#define Baud_14400 14400
+#define Baud_19200 19200
+#define Baud_38400 38400
+#define Baud_57600 57600
+#define Baud_115200 115200
+#define Baud_128000 128000
+#define Baud_256000 256000
+/* baudrate enum type */
+typedef VAR( uint32, TYPEDEF )   UART_BaudRate;
 
 /* 0x00 -> 5 bits , 0x01 -> 6 bits , 0x02 -> 7 bits , 0x03 -> 8 bits*/
-typedef enum {Word_5Bits = 0,Word_6Bits,Word_7Bits,Word_8Bits} WordLengthType;
+#define Word_5Bits 0x00u
+#define Word_6Bits 0x01u
+#define Word_7Bits 0x02u
+#define Word_8Bits 0x03u
+/* wordlength enum type  */
+typedef VAR( uint8, TYPEDEF )  WordLengthType;
 
-typedef enum {TX_RX_OK = 0,FIFO_FULL,FIFO_EMPTY,FRAMING_ERROR,PARITY_ERROR,BREAK_ERROR,OVERRUN_ERROR,NO_INIT } TX_RX_StatusType;
+
+#define TX_RX_OK 0x00u
+#define FIFO_FULL 0x01u
+#define FIFO_EMPTY 0x02u
+#define FRAMING_ERROR 0x03u
+#define PARITY_ERROR 0x04u
+#define BREAK_ERROR 0x05u
+#define OVERRUN_ERROR 0x06u
+#define INVALID_UART_ID 0x07u
+#define NO_INIT 0xffu
+/* enum UART status type */
+typedef VAR( uint8, TYPEDEF ) TX_RX_StatusType;
 
 
 typedef struct
@@ -36,13 +70,13 @@ typedef struct
 }UART_CfgType;
 
 /* defined at UART_Cfg.c */
-extern const UART_CfgType UART_ConfigParam [UART_GROUPS_NUMBER];
+extern CONST( UART_CfgType, AUTOMATIC) UART_ConfigParam [UART_GROUPS_NUMBER];
 
-
-void UART_INIT();
-/* Transmit Data through group */
-TX_RX_StatusType UART_TX(uint8_t ModuleId,uint8_t TXByte);
-/* Receive Data through group */
-TX_RX_StatusType UART_RX(uint8_t ModuleId,uint8_t* RXBytePtr);
+/* Initialize UART chosen modules in configuration file*/
+FUNC(void, AUTOMATIC) UART_INIT();
+/* Transmit Data through module group */
+FUNC(TX_RX_StatusType, AUTOMATIC) UART_TX(uint8_t ModuleId,uint8_t TXByte);
+/* Receive Data through module group */
+FUNC(TX_RX_StatusType, AUTOMATIC) UART_RX(uint8_t ModuleId,uint8_t* RXBytePtr);
 
 #endif
