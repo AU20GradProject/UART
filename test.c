@@ -27,7 +27,6 @@ void UART_GPIO_init(){
 
 void sendStringPA1(char TXWORD[]){
     TX_RX_StatusType status;
-    uint32_t i;
     uint8_t TXi = 0;
 
 
@@ -39,11 +38,12 @@ void sendStringPA1(char TXWORD[]){
             while(1){} /* error while sending */
         }
 
-        for(i=0;i<100000;i++);
+        while(UART_TX_FULL(0) == 0xff); /* wait till transmitter fifo is empty*/
         TXi++;
 
     }
 
 }
+
 
 

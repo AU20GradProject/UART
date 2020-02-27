@@ -145,3 +145,11 @@ FUNC(TX_RX_StatusType, AUTOMATIC) UART_RX(uint8_t ModuleId,uint8_t* RXBytePtr){
 return status;
 
 }
+
+FUNC(uint8_t, AUTOMATIC) UART_TX_FULL(uint8_t ModuleId){
+    return (TXFIFOFULL(ModuleId) ? 0xff : 0x00);
+}
+
+FUNC(uint8_t, AUTOMATIC) UART_RX_EMPTY(uint8_t ModuleId){
+    return (RXFIFOEMPTY(ModuleId) ? 0xff : 0x00);
+}

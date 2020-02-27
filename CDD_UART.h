@@ -78,5 +78,8 @@ FUNC(void, AUTOMATIC) UART_INIT();
 FUNC(TX_RX_StatusType, AUTOMATIC) UART_TX(uint8_t ModuleId,uint8_t TXByte);
 /* Receive Data through module group */
 FUNC(TX_RX_StatusType, AUTOMATIC) UART_RX(uint8_t ModuleId,uint8_t* RXBytePtr);
-
+/* Returns 0xff if the transmitter is busy*/
+FUNC(uint8_t, AUTOMATIC) UART_TX_FULL(uint8_t ModuleId);
+/* Returns 0xff if the receiver is EMPTY, no data to be read*/
+FUNC(uint8_t, AUTOMATIC) UART_RX_EMPTY(uint8_t ModuleId);
 #endif
