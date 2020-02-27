@@ -35,7 +35,7 @@ FUNC(void, AUTOMATIC) UART_INIT(){
      /* Enabling the clock on the UART module.*/
         RCGCUART_REG |= ( 1 << ( Init_CfgPtr->UARTModule ) );
 
-        Brd = (double) ( Init_CfgPtr->UART_ClockMhz * 1000000 ) / (double)( ( Init_CfgPtr->HSE ? 8 : 16 ) * (Init_CfgPtr->UART_BaudRate) );
+        Brd = (double) ( Init_CfgPtr->UART_ClockMhz * 1000000 ) / ( ( Init_CfgPtr->HSE ? 8 : 16 ) * (Init_CfgPtr->UART_BaudRate) );
         IntBrd = (uint16_t) Brd;
         FracBrd = (uint8_t) ( ( Brd - IntBrd ) * 64 + 0.5);
 
@@ -88,18 +88,28 @@ FUNC(TX_RX_StatusType, AUTOMATIC) UART_TX(uint8_t ModuleId,uint8_t TXByte){
         if( (UART_GroupState[ModuleId]==1 ) ){
         UART_Info = &  UART_ConfigParam[ModuleId];
 
-        /// 0010 0000 TXFF UART Transmit FIFO Full pin 5
-            if( ( UARTFR_REG( UART_Info->UARTModule ) & (0x20) ) == 0x00 ){
-                UARTDR_REG( UART_Info->UARTModule ) = TXByte;
-                status = TX_RX_OK;
-            }else {
-                status = FIFO_FULL;
+        /*/// 0010 0000 TXFF UART Transmit FIFO Full pin 5
+        if( ( UARTFR_REG( UART_Info->UARTModule ) & (0x20) ) == 0x00 ){
+            UARTDR_REG( UART_Info->UARTModule ) = TXByte;
+            status = TX_RX_OK;
+        }else {
+            status = FIFO_FULL;
+        }
+        */
+            while(1){
+                if( ( UARTFR_REG( UART_Info->UARTModule ) & (0x20) ) == 0x00 ){
+                   UARTDR_REG( UART_Info->UARTModule ) = TXByte;
+                   status = TX_RX_OK;
+                   break;
+               }
             }
 
         }else {
             /* I may call the initialization function here */
             status = NO_INIT;
         }
+
+
     }else {
         /* Invalid UART ID*/
         status = INVALID_UART_ID;
@@ -145,7 +155,6 @@ FUNC(TX_RX_StatusType, AUTOMATIC) UART_RX(uint8_t ModuleId,uint8_t* RXBytePtr){
 return status;
 
 }
-
 FUNC(uint8_t, AUTOMATIC) UART_TX_FULL(uint8_t ModuleId){
     return (TXFIFOFULL(ModuleId) ? 0xff : 0x00);
 }
