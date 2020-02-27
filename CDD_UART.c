@@ -35,7 +35,7 @@ FUNC(void, AUTOMATIC) UART_INIT(){
      /* Enabling the clock on the UART module.*/
         RCGCUART_REG |= ( 1 << ( Init_CfgPtr->UARTModule ) );
 
-        Brd = ( Init_CfgPtr->UART_ClockMhz * 1000000 ) / ( ( Init_CfgPtr->HSE ? 8 : 16 ) * (Init_CfgPtr->UART_BaudRate) );
+        Brd = (double) ( Init_CfgPtr->UART_ClockMhz * 1000000 ) / (double)( ( Init_CfgPtr->HSE ? 8 : 16 ) * (Init_CfgPtr->UART_BaudRate) );
         IntBrd = (uint16_t) Brd;
         FracBrd = (uint8_t) ( ( Brd - IntBrd ) * 64 + 0.5);
 
