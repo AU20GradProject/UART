@@ -7,9 +7,15 @@
 #include "test.h"
 
 int main(void)
-{
+    {
     UART_GPIO_init();
-    char TXWORD[] = "WRITE WHAT YOU WANT:";
+    char TXWORD[RcvCharCount] = "TEST8ch"; /* string 9 chars*/
+
+    while(1){
+        sendStringPA1(TXWORD); /* send a string first */
+        receiveStringPA1((uint8_t *)TXWORD); /*receive a string 8 chars*/
+    }
+#if 0
     TX_RX_StatusType statusTX, statusRx;
     uint32_t i;
     uint8_t TXbyte, TXbytePrev = 0; /*a byte received to be redirected*/
@@ -43,4 +49,5 @@ int main(void)
         TXbytePrev = TXbyte;
     }
    return 0;
+#endif
 }

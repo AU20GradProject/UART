@@ -81,10 +81,15 @@ static const uint32_t PortsBaseAddressLut[PORTS_NUMBER] =
 #define GPIO_INT_BE_BIT_NUM 2
 #define GPIO_INT_BR_MASK (1 << GPIO_INT_BE_BIT_NUM)
 
+/* number of characters to receive in receiveStringPA1 */
+#define RcvCharCount 8
+
 /* Enabling clock on PORTA GPIO, this should be handled in DIO driver */
 void UART_GPIO_init();
 /* send a string in port A, Internal loop back to the computer for testing */
 void sendStringPA1(char TXWORD[]);
+/* receive a string in port A, Internal loop back to the computer for testing */
+void receiveStringPA1(char TXWORD[]);
 
 
 #endif /* UART_TEST_H_ */

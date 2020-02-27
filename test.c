@@ -45,5 +45,20 @@ void sendStringPA1(char TXWORD[]){
 
 }
 
+void receiveStringPA1(uint8_t *RXWORD){
+    TX_RX_StatusType status;
+    uint8_t RXi;
+    RXi=0;
 
+    while( RXi < RcvCharCount){
 
+        while(UART_RX_EMPTY(0) == 0xff); //RX fifo empty, wait till it has data to be received
+
+        status = UART_RX(0, &(RXWORD[RXi]));
+        if (status != TX_RX_OK){
+            while(1){} /* error while sending */
+        }
+
+        RXi++;
+    }
+}
