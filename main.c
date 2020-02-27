@@ -25,6 +25,9 @@ int main(void)
 
         while(UART_RX_EMPTY(0) == 0xff); //RX fifo empty, wait till it has data to be received
         statusRx = UART_RX(0, &TXbyte); /*receive whatever is sent and transmit it*/
+        if (statusTX != TX_RX_OK){
+            while(1){} /* error while sending */
+        }
 
         /* not to send the same byte multiple times*/
         if(TXbytePrev != TXbyte){
