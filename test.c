@@ -25,29 +25,25 @@ void UART_GPIO_init(){
        UART_INIT();
 }
 
-void Print(char TXWORD[],uint8_t NewLine){
+void sendStringPA1(char TXWORD[]){
     TX_RX_StatusType status;
-    uint32_t i;
     uint8_t TXi = 0;
 
 
 
     while( TXWORD[TXi] != '\0'){
-//        if(TXWORD[TXi] == '\n'){
-//            break;
-//        }
+
         status = UART_TX(0, TXWORD[TXi]);
         if (status != TX_RX_OK){
             while(1){} /* error while sending */
         }
+
+        while(UART_TX_FULL(0) == 0xff); /* wait till transmitter fifo is empty*/
         TXi++;
 
     }
-    if(NewLine == 1){
-        UART_TX(0,'\r');
-        UART_TX(0,'\n');
-    }
 
 }
+
 
 

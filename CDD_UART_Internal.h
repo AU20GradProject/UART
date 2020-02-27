@@ -54,5 +54,7 @@ VAR( static const uint32_t, static ) ModulesBaseAddressLut[MODULES_NUMBER] =
 
 /* VAR(static uint8_t, static )UART_GroupState[UART_GROUPS_NUMBER] = {0}; */
 
+#define TXFIFOFULL(MODULE_ID) (UARTFR_REG(MODULE_ID) & 0x0020) /* if Transmitter FIFO is not full this will equal 0x00, Transmitter can transmit*/
+#define RXFIFOEMPTY(MODULE_ID) (UARTFR_REG(MODULE_ID) & 0x0010) /* if Receiver FIFO is not empty this will equal 0, Receiver has data received*/
 
 #endif /* UART_CDD_UART_INTERNAL_H_ */
