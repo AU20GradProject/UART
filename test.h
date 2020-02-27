@@ -89,7 +89,7 @@ void UART_GPIO_init();
 /* send a string in port A, Internal loop back to the computer for testing */
 void sendStringPA1(char TXWORD[]);
 /* receive a string in port A, Internal loop back to the computer for testing */
-void receiveStringPA1(char TXWORD[]);
+void receiveStringPA1(char RXWORD[]);
 
 
 #endif /* UART_TEST_H_ */
