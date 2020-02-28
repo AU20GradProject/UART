@@ -25,9 +25,9 @@ void UART_GPIO_init(){
        UART_INIT();
 }
 
-void sendStringPA1(char TXWORD[]){
+void sendStringPA1(uint8 TXWORD[]){
     TX_RX_StatusType status;
-    uint8_t TXi = 0;
+    uint8 TXi = 0;
 
 
 
@@ -45,9 +45,9 @@ void sendStringPA1(char TXWORD[]){
 
 }
 
-void receiveStringPA1(uint8_t *RXWORD){
+void receiveStringPA1(uint8 *RXWORD){
     TX_RX_StatusType status;
-    uint8_t RXi;
+    uint8 RXi;
     RXi=0;
 
     while( RXi < RcvCharCount){

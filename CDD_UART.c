@@ -3,7 +3,7 @@
 #include "CDD_UART_Internal.h"
 
 /* UART Addresses lookup table */
-VAR( static const uint32_t, static ) ModulesBaseAddressLut[MODULES_NUMBER] =
+VAR( static const uint32, static ) ModulesBaseAddressLut[MODULES_NUMBER] =
 {
         UART0_BASE_ADDRESS,
         UART1_BASE_ADDRESS,
@@ -16,14 +16,14 @@ VAR( static const uint32_t, static ) ModulesBaseAddressLut[MODULES_NUMBER] =
 };
 
 /* UART groups initialization status */
-VAR(static uint8_t, static )UART_GroupState[UART_GROUPS_NUMBER] = {0};
+VAR(static uint8, static )UART_GroupState[UART_GROUPS_NUMBER] = {0};
 
 
 FUNC(void, AUTOMATIC) UART_INIT(){
-    VAR(uint16_t, AUTOMATIC) IntBrd;
-    VAR(uint8_t, AUTOMATIC) FracBrd;
-    VAR(uint8_t, AUTOMATIC) LoopIndex;
-    VAR(uint8_t, AUTOMATIC) ErrorFlag = 0;
+    VAR(uint16, AUTOMATIC) IntBrd;
+    VAR(uint8, AUTOMATIC) FracBrd;
+    VAR(uint8, AUTOMATIC) LoopIndex;
+    VAR(uint8, AUTOMATIC) ErrorFlag = 0;
 
     VAR(double, AUTOMATIC) Brd; /* Baud Rate divsor */
     CONST(UART_CfgType *, AUTOMATIC) Init_CfgPtr;
@@ -36,8 +36,8 @@ FUNC(void, AUTOMATIC) UART_INIT(){
         RCGCUART_REG |= ( 1 << ( Init_CfgPtr->UARTModule ) );
 
         Brd = (double) ( Init_CfgPtr->UART_ClockMhz * 1000000 ) / (double)( ( Init_CfgPtr->HSE ? 8 : 16 ) * (Init_CfgPtr->UART_BaudRate) );
-        IntBrd = (uint16_t) Brd;
-        FracBrd = (uint8_t) ( ( Brd - IntBrd ) * 64 + 0.5);
+        IntBrd = (uint16) Brd;
+        FracBrd = (uint8) ( ( Brd - IntBrd ) * 64 + 0.5);
 
         /*Disable the UART : UARTEN bit 0 */
         UARTCTL_REG( Init_CfgPtr->UARTModule ) &= ~0x01;
@@ -80,7 +80,7 @@ FUNC(void, AUTOMATIC) UART_INIT(){
 }
 
 /* Transmit Data through group */
-FUNC(TX_RX_StatusType, AUTOMATIC) UART_TX(uint8_t ModuleId,uint8_t TXByte){
+FUNC(TX_RX_StatusType, AUTOMATIC) UART_TX(uint8 ModuleId,uint8 TXByte){
     VAR(TX_RX_StatusType, AUTOMATIC) status;
     CONST(UART_CfgType *, AUTOMATIC) UART_Info;
 
@@ -107,7 +107,7 @@ FUNC(TX_RX_StatusType, AUTOMATIC) UART_TX(uint8_t ModuleId,uint8_t TXByte){
     return status;
 }
 /* Receive Data through group */
-FUNC(TX_RX_StatusType, AUTOMATIC) UART_RX(uint8_t ModuleId,uint8_t* RXBytePtr){
+FUNC(TX_RX_StatusType, AUTOMATIC) UART_RX(uint8 ModuleId,uint8* RXBytePtr){
     VAR(TX_RX_StatusType, AUTOMATIC) status;
     CONST(UART_CfgType *, AUTOMATIC) UART_Info;
 
@@ -146,10 +146,50 @@ return status;
 
 }
 
-FUNC(uint8_t, AUTOMATIC) UART_TX_FULL(uint8_t ModuleId){
+FUNC(uint8, AUTOMATIC) UART_TX_FULL(uint8 ModuleId){
     return (TXFIFOFULL(ModuleId) ? 0xff : 0x00);
 }
 
-FUNC(uint8_t, AUTOMATIC) UART_RX_EMPTY(uint8_t ModuleId){
+FUNC(uint8, AUTOMATIC) UART_RX_EMPTY(uint8 ModuleId){
     return (RXFIFOEMPTY(ModuleId) ? 0xff : 0x00);
+}
+
+
+FUNC(TX_RX_StatusType, AUTOMATIC) sendString(uint8 ModuleId, uint8 TXWORD[]){
+    TX_RX_StatusType status;
+    uint8 TXi = 0;
+
+    while( TXWORD[TXi] != '\0'){
+
+        status = UART_TX(ModuleId, TXWORD[TXi]);
+        if (status != TX_RX_OK){
+            return status; /* error while sending */
+        }
+
+        while(UART_TX_FULL(ModuleId) == 0xff); /* wait till transmitter fifo is empty*/
+        TXi++;
+
+    }
+
+    return TX_RX_OK;
+}
+
+FUNC(TX_RX_StatusType, AUTOMATIC) receiveString(uint8 ModuleId, uint8 *RXWORD){
+    TX_RX_StatusType status;
+    uint8 RXi;
+    RXi=0;
+
+    while( RXi < RcvCharCount){
+
+        while(UART_RX_EMPTY(ModuleId) == 0xff); //RX fifo empty, wait till it has data to be received
+
+        status = UART_RX(ModuleId, &(RXWORD[RXi]));
+        if (status != TX_RX_OK){
+            return status; /* error while sending */
+        }
+
+        RXi++;
+    }
+
+    return TX_RX_OK;
 }

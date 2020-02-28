@@ -9,16 +9,16 @@
 int main(void)
     {
     UART_GPIO_init();
-    char TXWORD[RcvCharCount] = "TEST8ch"; /* string 9 chars*/
+    uint8 TXWORD[RcvCharCount] = "TEST8ch"; /* string 9 chars*/
 
     while(1){
         sendStringPA1(TXWORD); /* send a string first */
-        receiveStringPA1((uint8_t *)TXWORD); /*receive a string 8 chars*/
+        receiveStringPA1((uint8 *)TXWORD); /*receive a string 8 chars*/
     }
 #if 0
     TX_RX_StatusType statusTX, statusRx;
-    uint32_t i;
-    uint8_t TXbyte, TXbytePrev = 0; /*a byte received to be redirected*/
+    uint32 i;
+    uint8 TXbyte, TXbytePrev = 0; /*a byte received to be redirected*/
 
     sendStringPA1(TXWORD); /* send a string first */
     TXbyte='A';

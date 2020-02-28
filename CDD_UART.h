@@ -1,7 +1,6 @@
 #ifndef UART_H
 #define UART_H
 
-#include <stdint.h>
 #include "CDD_UART_Cfg.h"
 #include "../Common/Std_Types.h"
 
@@ -48,38 +47,46 @@ typedef VAR( uint8, TYPEDEF ) TX_RX_StatusType;
 
 typedef struct
 {
-    uint8_t UARTModule; /* UART modules from 0 to 7 */
+    uint8 UARTModule; /* UART modules from 0 to 7 */
 
     UART_BaudRate UART_BaudRate;
-    uint8_t UART_ClockMhz; /* In MHz */
+    uint8 UART_ClockMhz; /* In MHz */
 
-    uint8_t HSE;/* HighSpeedEnable 0-> clkDiv: 16, 0xff-> clkDiv: 8.*/
+    uint8 HSE;/* HighSpeedEnable 0-> clkDiv: 16, 0xff-> clkDiv: 8.*/
 
-    uint8_t StopBits; /*0-> 1 stopbit , 0xff-> 2 stop bits*/
+    uint8 StopBits; /*0-> 1 stopbit , 0xff-> 2 stop bits*/
 
-    uint8_t Parity; /* 0xff -> Enable parity , 0 -> disable parity*/
-    uint8_t ParityType; /* 0 -> odd, 0xff: even*/
-    uint8_t StickParity; /* 0xff -> Enable Stick parity , 0 -> disable Stick parity*/
+    uint8 Parity; /* 0xff -> Enable parity , 0 -> disable parity*/
+    uint8 ParityType; /* 0 -> odd, 0xff: even*/
+    uint8 StickParity; /* 0xff -> Enable Stick parity , 0 -> disable Stick parity*/
 
-    uint8_t Fifo; /* 0xff -> Enable FIFO , 0 -> disable FIFO*/
+    uint8 Fifo; /* 0xff -> Enable FIFO , 0 -> disable FIFO*/
 
     WordLengthType WordLength;
 
-    uint8_t UART_CC; /* 0x00 : system clock, 0xff PIOSC*/
+    uint8 UART_CC; /* 0x00 : system clock, 0xff PIOSC*/
 
 }UART_CfgType;
 
 /* defined at UART_Cfg.c */
 extern CONST( UART_CfgType, AUTOMATIC) UART_ConfigParam [UART_GROUPS_NUMBER];
 
+/* number of characters to receive in receiveString */
+#define RcvCharCount 8
+
 /* Initialize UART chosen modules in configuration file*/
 FUNC(void, AUTOMATIC) UART_INIT();
 /* Transmit Data through module group */
-FUNC(TX_RX_StatusType, AUTOMATIC) UART_TX(uint8_t ModuleId,uint8_t TXByte);
+FUNC(TX_RX_StatusType, AUTOMATIC) UART_TX(uint8 ModuleId,uint8 TXByte);
 /* Receive Data through module group */
-FUNC(TX_RX_StatusType, AUTOMATIC) UART_RX(uint8_t ModuleId,uint8_t* RXBytePtr);
+FUNC(TX_RX_StatusType, AUTOMATIC) UART_RX(uint8 ModuleId,uint8* RXBytePtr);
 /* Returns 0xff if the transmitter is busy*/
-FUNC(uint8_t, AUTOMATIC) UART_TX_FULL(uint8_t ModuleId);
+FUNC(uint8, AUTOMATIC) UART_TX_FULL(uint8 ModuleId);
 /* Returns 0xff if the receiver is EMPTY, no data to be read*/
-FUNC(uint8_t, AUTOMATIC) UART_RX_EMPTY(uint8_t ModuleId);
+FUNC(uint8, AUTOMATIC) UART_RX_EMPTY(uint8 ModuleId);
+/* send a string, Internal loop back to the computer for testing */
+FUNC(TX_RX_StatusType, AUTOMATIC) sendString(uint8 ModuleId, uint8 TXWORD[]);
+/* receive a string, Internal loop back to the computer for testing */
+FUNC(TX_RX_StatusType, AUTOMATIC) receiveString(uint8 ModuleId, uint8 *RXWORD);
+
 #endif

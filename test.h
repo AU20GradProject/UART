@@ -17,7 +17,7 @@
  * */
 
 /*Register memory map*/
-typedef volatile uint32_t* const GPIO_RegAddType;
+typedef volatile uint32* const GPIO_RegAddType;
 #define PORTS_NUMBER 6u /* maximum ports number in the kit */
 
 #define PORTA_BASE_ADDRESS 0x40004000
@@ -26,7 +26,7 @@ typedef volatile uint32_t* const GPIO_RegAddType;
 #define PORTD_BASE_ADDRESS 0x40007000
 #define PORTE_BASE_ADDRESS 0x40024000
 #define PORTF_BASE_ADDRESS 0x40025000
-static const uint32_t PortsBaseAddressLut[PORTS_NUMBER] =
+static const uint32 PortsBaseAddressLut[PORTS_NUMBER] =
 {       PORTA_BASE_ADDRESS,
     PORTB_BASE_ADDRESS,
     PORTC_BASE_ADDRESS,
@@ -87,9 +87,9 @@ static const uint32_t PortsBaseAddressLut[PORTS_NUMBER] =
 /* Enabling clock on PORTA GPIO, this should be handled in DIO driver */
 void UART_GPIO_init();
 /* send a string in port A, Internal loop back to the computer for testing */
-void sendStringPA1(char TXWORD[]);
+void sendStringPA1(uint8 TXWORD[]);
 /* receive a string in port A, Internal loop back to the computer for testing */
-void receiveStringPA1(char RXWORD[]);
+void receiveStringPA1(uint8 RXWORD[]);
 
 
 #endif /* UART_TEST_H_ */
