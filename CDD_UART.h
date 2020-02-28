@@ -2,7 +2,7 @@
 #define UART_H
 
 #include "CDD_UART_Cfg.h"
-#include "../Common/Std_Types.h"
+#include "Common/Std_Types.h"
 
 /* available baudrates */
 
