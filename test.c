@@ -62,3 +62,22 @@ void receiveStringPA1(uint8 *RXWORD){
         RXi++;
     }
 }
+
+void calcFnTime(uint32_t *duration, void (*fn)(void)){
+
+    SYSCTL_RCGCWTIMER_R |= 0x01;     /* enable clock to wide Timer Block 0 */
+
+    WTIMER0_CTL_R = 0;            /* disable Timer before initialization */
+    WTIMER0_CFG_R = 0x04;         /* 32-bit option */
+    WTIMER0_TAMR_R = 0x01 | 0x10;        /* oneshot mode 0x01 and up-counter 0x10  */
+    WTIMER0_TAILR_R = 0xFFFFFFFF;      /* counting reset */
+
+    WTIMER0_CTL_R |= 0x01;        /* enable Timer A after initialization */
+
+    (*fn)(); /* call the function */
+
+    WTIMER0_CTL_R = 0;            /* disable Timer after function finish */
+
+    *duration = WTIMER0_TAV_R;
+}
+

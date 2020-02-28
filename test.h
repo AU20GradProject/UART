@@ -81,6 +81,43 @@ static const uint32 PortsBaseAddressLut[PORTS_NUMBER] =
 #define GPIO_INT_BE_BIT_NUM 2
 #define GPIO_INT_BR_MASK (1 << GPIO_INT_BE_BIT_NUM)
 
+/* Registers for time calculations function */
+/* USING WIDE TIMER 0 A */
+//*****************************************************************************
+//
+// Timer registers (WTIMER0)
+//
+//*****************************************************************************
+#define SYSCTL_RCGCWTIMER_R     (*((volatile uint32_t *)0x400FE65C))
+#define WTIMER0_CFG_R           (*((volatile uint32_t *)0x40036000))
+#define WTIMER0_TAMR_R          (*((volatile uint32_t *)0x40036004))
+#define WTIMER0_TBMR_R          (*((volatile uint32_t *)0x40036008))
+#define WTIMER0_CTL_R           (*((volatile uint32_t *)0x4003600C))
+#define WTIMER0_SYNC_R          (*((volatile uint32_t *)0x40036010))
+#define WTIMER0_IMR_R           (*((volatile uint32_t *)0x40036018))
+#define WTIMER0_RIS_R           (*((volatile uint32_t *)0x4003601C))
+#define WTIMER0_MIS_R           (*((volatile uint32_t *)0x40036020))
+#define WTIMER0_ICR_R           (*((volatile uint32_t *)0x40036024))
+#define WTIMER0_TAILR_R         (*((volatile uint32_t *)0x40036028))
+#define WTIMER0_TBILR_R         (*((volatile uint32_t *)0x4003602C))
+#define WTIMER0_TAMATCHR_R      (*((volatile uint32_t *)0x40036030))
+#define WTIMER0_TBMATCHR_R      (*((volatile uint32_t *)0x40036034))
+#define WTIMER0_TAPR_R          (*((volatile uint32_t *)0x40036038))
+#define WTIMER0_TBPR_R          (*((volatile uint32_t *)0x4003603C))
+#define WTIMER0_TAPMR_R         (*((volatile uint32_t *)0x40036040))
+#define WTIMER0_TBPMR_R         (*((volatile uint32_t *)0x40036044))
+#define WTIMER0_TAR_R           (*((volatile uint32_t *)0x40036048))
+#define WTIMER0_TBR_R           (*((volatile uint32_t *)0x4003604C))
+#define WTIMER0_TAV_R           (*((volatile uint32_t *)0x40036050))
+#define WTIMER0_TBV_R           (*((volatile uint32_t *)0x40036054))
+#define WTIMER0_RTCPD_R         (*((volatile uint32_t *)0x40036058))
+#define WTIMER0_TAPS_R          (*((volatile uint32_t *)0x4003605C))
+#define WTIMER0_TBPS_R          (*((volatile uint32_t *)0x40036060))
+#define WTIMER0_TAPV_R          (*((volatile uint32_t *)0x40036064))
+#define WTIMER0_TBPV_R          (*((volatile uint32_t *)0x40036068))
+#define WTIMER0_PP_R            (*((volatile uint32_t *)0x40036FC0))
+
+
 /* number of characters to receive in receiveStringPA1 */
 #define RcvCharCount 8
 
@@ -91,5 +128,7 @@ void sendStringPA1(uint8 TXWORD[]);
 /* receive a string in port A, Internal loop back to the computer for testing */
 void receiveStringPA1(uint8 RXWORD[]);
 
+/* calculate function duration in C */
+void calcFnTime(uint32_t *duration, void (*fn)(void));
 
 #endif /* UART_TEST_H_ */
