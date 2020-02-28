@@ -6,7 +6,7 @@
 
 #include "test.h"
 
-int main(void)
+int UARTmain(void)
     {
     UART_GPIO_init();
     uint8 TXWORD[RcvCharCount] = "TEST8ch"; /* string 9 chars*/
