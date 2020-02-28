@@ -129,6 +129,6 @@ void sendStringPA1(uint8 TXWORD[]);
 void receiveStringPA1(uint8 RXWORD[]);
 
 /* calculate function duration in C */
-void calcFnTime(uint32_t *duration, void (*fn)(void));
+void calcFnTime(uint32 *duration, void (*fn)(void));
 
 #endif /* UART_TEST_H_ */

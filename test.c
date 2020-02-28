@@ -63,7 +63,7 @@ void receiveStringPA1(uint8 *RXWORD){
     }
 }
 
-void calcFnTime(uint32_t *duration, void (*fn)(void)){
+void calcFnTime(uint32 *duration, void (*fn)(void)){
 
     SYSCTL_RCGCWTIMER_R |= 0x01;     /* enable clock to wide Timer Block 0 */
 
