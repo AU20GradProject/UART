@@ -130,5 +130,9 @@ void receiveStringPA1(uint8 RXWORD[]);
 
 /* calculate function duration in C */
 void calcFnTime(uint32 *duration, void (*fn)(void));
+/* start one-shot timer counting from ZERO */
+void startWTimer0A(void);
+/* stop the one-shot timer and return the time elapsed since started*/
+uint32 stopWTimer0A(void);
 
 #endif /* UART_TEST_H_ */
